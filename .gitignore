@@ -34,3 +34,4 @@ bower.json
 
 public/v/*
 !public/v/.gitkeep
+vendor/
