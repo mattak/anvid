@@ -27,29 +27,65 @@ _DEVICE_PRODUCT_BOARD=$(adb shell getprop ro.product.board | perl -ne 'printf "%
 _DEVICE_PRODUCT_BRAND=$(adb shell getprop ro.product.brand | perl -ne 'printf "%s", $_')
 _DEVICE_PRODUCT_MDOEL=$(adb shell getprop ro.product.model | perl -ne 'printf "%s", $_')
 
-if [ $_DEVICE_SDK_VERSION_CODE -lt 20 ]; then
-    echo "API LEVEL should be greater then 20. you are ${_DEVICE_SDK_VERSION_CODE}."
-    exit 1
-fi
-
-_TMP_ANDROID_FILE=/sdcard/tmp.mp4
-_TMP_PC_FILE=/tmp/tmp.mp4
-
-_TTY=$(tty | sed 's#^/dev/##')
-_TPGID=$(ps h -t ttys002 -o tpgid | tail -n +2 | uniq)
-
 function copy_and_upload() {
+    _TMP_ANDROID_FILE=$1
+    _TMP_PC_FILE=$2
+    _URL=$3
+
     # It's very impotant to wait screenrecord saving file.
     sleep 1
     adb pull $_TMP_ANDROID_FILE $_TMP_PC_FILE 1>&2
     sleep 0.1
-    # adb shell rm $_TMP_ANDROID_FILE
+    adb shell rm $_TMP_ANDROID_FILE
     sleep 0.1
-    curl -X POST -F file=@$_TMP_PC_FILE $APP_URL/upload
+    curl -X POST -F file=@$_TMP_PC_FILE $_URL/upload
     sleep 0.1
 }
 
-# wait SIGINT. when you type Ctrl+C it sent movie.
-trap "copy_and_upload" 2
+function _screenrecord() {
+    _TMP_ANDROID_FILE=$1
+    _TMP_PC_FILE=$2
+    _URL=$3
 
-adb shell screenrecord $_TMP_ANDROID_FILE
+    # wait SIGINT. when you type Ctrl+C it sent movie.
+    trap "copy_and_upload $_TMP_ANDROID_FILE $_TMP_PC_FILE $_URL" 2
+
+    adb shell screenrecord $_TMP_ANDROID_FILE
+}
+
+function _capture() {
+    _TMP_ANDROID_FILE=$1
+    _TMP_PC_FILE=$2
+    _URL=$3
+
+    adb shell screencap -p $_TMP_ANDROID_FILE
+    copy_and_upload $_TMP_ANDROID_FILE $_TMP_PC_FILE $_URL
+}
+
+function _command_capture() {
+  _TMP_ANDROID_FILE=/sdcard/tmp.png
+  _TMP_PC_FILE=/tmp/tmp.png
+
+  _capture $_TMP_ANDROID_FILE $_TMP_PC_FILE $APP_URL
+}
+
+function _command_record() {
+  if [ $_DEVICE_SDK_VERSION_CODE -lt 20 ]; then
+      echo "API LEVEL should be greater then 20. you are ${_DEVICE_SDK_VERSION_CODE}."
+      exit 1
+  fi
+
+  _TMP_ANDROID_FILE=/sdcard/tmp.mp4
+  _TMP_PC_FILE=/tmp/tmp.mp4
+
+  _screenrecord $_TMP_ANDROID_FILE $_TMP_PC_FILE $APP_URL
+}
+
+if [ "$1" == "record" -o "$1" == "rec" ]; then
+    _command_record
+elif [ "$1" == "capture" -o "$1" == "cap" ]; then
+    _command_capture
+else
+    _command_capture
+fi
+
