@@ -32,6 +32,8 @@ bower.json
 
 # app
 
-public/v/*
-!public/v/.gitkeep
+public/raw/v/*
+!public/raw/v/.gitkeep
+public/raw/p/*
+!public/raw/p/.gitkeep
 vendor/

@@ -8,19 +8,26 @@ module Avid
     HASHIDS = Hashids.new "#{Random.new(1).rand}#{Time.now}"
     RANDOMS = Random.new(Time.now.to_i)
 
-    VIDEO_ROOT = File.expand_path(File.dirname(__FILE__) + '/../public/v')
+    VIDEO_ROOT = File.expand_path(File.dirname(__FILE__) + '/../public/raw/v')
+    IMAGE_ROOT = File.expand_path(File.dirname(__FILE__) + '/../public/raw/p')
     PUBLIC_DIR = File.dirname(__FILE__) + '/../public'
 
     # enable public folder resource
     set :public_dir, PUBLIC_DIR
 
     # show video
-    get '/:videoid' do
+    get '/v/:videoid' do
       @videoid = params[:videoid]
-      slim :index
+      slim :video
     end
 
-    # upload file
+    # show image
+    get '/p/:imageid' do
+      @imageid = params[:imageid]
+      slim :image
+    end
+
+    # upload video
     post '/upload' do
       unless params[:file] &&
             (tmpfile = params[:file][:tempfile]) &&
@@ -30,7 +37,17 @@ module Avid
 
       hash = HASHIDS.encode(RANDOMS.rand(100), Time.now.to_f)
       STDERR.puts "Uploading file, original name #{name.inspect}"
-      save_path = File.expand_path("#{VIDEO_ROOT}/#{hash}.mp4")
+
+      case name
+      when /\.png$/i
+        url_path = "/p/#{hash}"
+        save_path = File.expand_path("#{IMAGE_ROOT}/#{hash}.png")
+      when /\.mp4$/i
+        url_path = "/v/#{hash}"
+        save_path = File.expand_path("#{VIDEO_ROOT}/#{hash}.mp4")
+      else
+        return halt 500, "The file is not supporting."
+      end
 
       STDERR.puts "save_path: #{save_path}"
 
@@ -38,7 +55,7 @@ module Avid
         f.write tmpfile.read
       end
 
-      "http://localhost:1028/#{hash}"
+      "#{APP_URL}#{url_path}"
     end
 
     # get script
