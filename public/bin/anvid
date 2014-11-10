@@ -70,7 +70,7 @@ function _command_capture() {
 }
 
 function _command_record() {
-  if [ $_DEVICE_SDK_VERSION_CODE -lt 20 ]; then
+  if [ $_DEVICE_SDK_VERSION_CODE -lt 19 ]; then
       echo "API LEVEL should be greater then 20. you are ${_DEVICE_SDK_VERSION_CODE}."
       exit 1
   fi
