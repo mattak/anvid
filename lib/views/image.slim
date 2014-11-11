@@ -1,4 +1,27 @@
 section
-  div style="width: 480px; margin: 0 auto"
-    a href="/raw/p/#{@imageid}.png"
-      img id="image" src="/raw/p/#{@imageid}.png" style="width:100%"
+  div class="container-fluid"
+    div class="row"
+      div class="col-md-7"
+        div class="main-view"
+          a href="/raw/p/#{@imageid}.png"
+            img id="image" class="product img-responsive" src="/raw/p/#{@imageid}.png"
+      div class="col-md-5"
+        div class="side-view"
+          - unless @data.empty?
+            dl
+              dt Brand
+              dd= @data['product_brand']
+              dt Board
+              dd= @data['product_board']
+              dt Model
+              dd= @data['product_model']
+              dt Lcd density
+              dd= @data['sf_lcd_density']
+              dt Screen size
+              dd= @data['screen_size']
+              dt Sdk version code
+              dd= @data['sdk_version_code']
+              dt Sdk version name
+              dd= @data['sdk_version_name']
+              dt Serial number
+              dd= @data['serialno']

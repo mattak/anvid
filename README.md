@@ -1,4 +1,4 @@
-# Anvid
+# Rodeo
 
 Android Video Server
 
@@ -14,14 +14,14 @@ Then you can access http://localhost:1028 .
 
 # capture & share
 
-    $ curl http://localhost:1028/sh/anvid > /your/bin/anvid
-    $ chmod a+x /your/bin/anvid
+    $ curl http://localhost:1028/sh/rodeo > /your/bin/rodeo
+    $ chmod a+x /your/bin/rodeo
 
 record video.
 
-    $ anvid record
+    $ rodeo record
 
 capture screen.
 
-    $ anvid capture
+    $ rodeo capture
 

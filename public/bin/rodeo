@@ -21,16 +21,32 @@ if [ $_DEVICE_COUNT -gt 1 ]; then
 fi
 
 # Note: perl is for newline chomp.
-_DEVICE_SDK_VERSION_CODE=$(adb shell getprop ro.build.version.sdk | perl -ne 'printf "%d", $_')
-_DEVICE_SDK_VERSION_NAME=$(adb shell getprop ro.build.version.release | perl -ne 'printf "%s", $_')
-_DEVICE_PRODUCT_BOARD=$(adb shell getprop ro.product.board | perl -ne 'printf "%s", $_')
-_DEVICE_PRODUCT_BRAND=$(adb shell getprop ro.product.brand | perl -ne 'printf "%s", $_')
-_DEVICE_PRODUCT_MDOEL=$(adb shell getprop ro.product.model | perl -ne 'printf "%s", $_')
+_DEVICE_SDK_VERSION_CODE=$(adb shell getprop ro.build.version.sdk | ruby -ne 'chomp; print $_')
+_DEVICE_SDK_VERSION_NAME=$(adb shell getprop ro.build.version.release | ruby -ne 'chomp; print $_')
+_DEVICE_PRODUCT_BOARD=$(adb shell getprop ro.product.board | ruby -ne 'chomp; print $_')
+_DEVICE_PRODUCT_BRAND=$(adb shell getprop ro.product.brand | ruby -ne 'chomp; print $_')
+_DEVICE_PRODUCT_MODEL=$(adb shell getprop ro.product.model | ruby -ne 'chomp; print $_')
+_DEVICE_SF_LCD_DENSITY=$(adb shell getprop ro.sf.lcd_density | ruby -ne 'chomp; print $_')
+_DEVICE_SERIALNO=$(adb shell getprop ro.serialno | ruby -ne 'chomp; print $_')
+_DEVICE_SCREEN_SIZE=$(adb shell dumpsys window | egrep 'init=(\d+x\d+)' | ruby -pe 'chomp; $_.gsub!(%r|.+init=(\d+x\d+) .+|,"\\1")')
 
 function copy_and_upload() {
     _TMP_ANDROID_FILE=$1
     _TMP_PC_FILE=$2
     _URL=$3
+
+    _DATA="{"
+    _DATA="$_DATA\"sdk_version_code\": \"$_DEVICE_SDK_VERSION_CODE\","
+    _DATA="$_DATA\"sdk_version_name\":\"$_DEVICE_SDK_VERSION_NAME\","
+    _DATA="$_DATA\"product_brand\":\"$_DEVICE_PRODUCT_BRAND\","
+    _DATA="$_DATA\"product_board\":\"$_DEVICE_PRODUCT_BOARD\","
+    _DATA="$_DATA\"product_model\":\"$_DEVICE_PRODUCT_MODEL\","
+    _DATA="$_DATA\"sf_lcd_density\":\"$_DEVICE_SF_LCD_DENSITY\","
+    _DATA="$_DATA\"serialno\":\"$_DEVICE_SERIALNO\","
+    _DATA="$_DATA\"screen_size\":\"$_DEVICE_SCREEN_SIZE\""
+    _DATA="$_DATA}"
+
+    echo "data: $_DATA"
 
     # It's very impotant to wait screenrecord saving file.
     sleep 1
@@ -38,7 +54,10 @@ function copy_and_upload() {
     sleep 0.1
     adb shell rm $_TMP_ANDROID_FILE
     sleep 0.1
-    curl -X POST -F file=@$_TMP_PC_FILE $_URL/upload
+    curl -X POST \
+        -F file=@$_TMP_PC_FILE \
+        -F "data=$_DATA" \
+        $_URL/upload
     sleep 0.1
 }
 
@@ -88,4 +107,3 @@ elif [ "$1" == "capture" -o "$1" == "cap" ]; then
 else
     _command_capture
 fi
-

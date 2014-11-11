@@ -2,4 +2,4 @@
 #\ --port 1028
 
 require "./lib/app"
-run Avid::App
+run Rodeo::App

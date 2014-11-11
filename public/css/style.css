@@ -1,4 +1,37 @@
 body {
-    color: #fff;
-    background-color: #f9f9f9;
+    color: #333;
+    background-color: #fcfcfc;
+}
+
+section.container {
+    margin-top: 10px
+}
+
+.main-view {
+}
+
+.main-view img {
+    max-height: 900px;
+    /* max-height: 853px; */
+    margin: 0 auto 0 auto;
+}
+
+.main-view > a {
+}
+
+.side-view {
+    padding: 10px;
+    color: #222;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.side-view > dl {
+    padding: 10px
+}
+
+.side-view > dl > dd {
+    text-align: right;
 }
