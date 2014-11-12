@@ -1,7 +1,31 @@
 section
-  div style="width: 480px; margin: auto"
-    video id="video" class="video-js vjs-default-skin" controls=true preload="auto" width="640" height="360" poster="http://video-js.zencoder.com/oceans-clip.png" data-setup='{"example_option":true}'
-      source src="/raw/v/#{@videoid}.mp4" type="video/mp4"
-      p class="vjs-no-js"
-      | To view this video please enable JavaScript,
-      | and consider upgrading to a web browser that
+  div class="container-fluid"
+    div class="row"
+      div class="col-md-7"
+        div class="main-view"
+          video id="video" class="video-js vjs-default-skin" controls=true preload="auto" width="100%" height="500px" poster="http://video-js.zencoder.com/oceans-clip.png" data-setup='{"example_option":true}'
+            source src="/raw/v/#{@videoid}.mp4" type="video/mp4"
+            p class="vjs-no-js"
+            | To view this video please enable JavaScript,
+            | and consider upgrading to a web browser that
+      div class="col-md-5"
+        div class="side-view"
+          - unless @data.empty?
+            dl
+              dt Brand
+              dd= @data['product_brand']
+              dt Board
+              dd= @data['product_board']
+              dt Model
+              dd= @data['product_model']
+              dt Lcd density
+              dd= @data['sf_lcd_density']
+              dt Screen size
+              dd= @data['screen_size']
+              dt Sdk version code
+              dd= @data['sdk_version_code']
+              dt Sdk version name
+              dd= @data['sdk_version_name']
+              dt Serial number
+              dd= @data['serialno']
+

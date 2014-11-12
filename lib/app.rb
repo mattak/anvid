@@ -83,6 +83,7 @@ module Rodeo
     # show video
     get '/v/:videoid' do
       @videoid = params[:videoid]
+      @data = stash_get params[:videoid]
       slim :video
     end
 
@@ -90,7 +91,6 @@ module Rodeo
     get '/p/:imageid' do
       @imageid = params[:imageid]
       @data = stash_get params[:imageid]
-      p @data
       slim :image
     end
 
