@@ -84,6 +84,8 @@ module Rodeo
     get '/v/:videoid' do
       @videoid = params[:videoid]
       @data = stash_get params[:videoid]
+      @title = "#{ @data['product_model'] } #{ @data['screen_size'] } / #{ @data['sdk_version_name'] } / #{ @data['sf_lcd_density'] }"
+      @title = "#{ @title } - Record by rodeo"
       slim :video
     end
 
@@ -91,6 +93,8 @@ module Rodeo
     get '/p/:imageid' do
       @imageid = params[:imageid]
       @data = stash_get params[:imageid]
+      @title = "#{ @data['product_model'] } #{ @data['screen_size'] } / #{ @data['sdk_version_name'] } / #{ @data['sf_lcd_density'] }"
+      @title = "#{ @title } - Capture by rodeo"
       slim :image
     end
 
